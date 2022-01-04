@@ -1,0 +1,59 @@
+; CT HN nhap 1 ki tu tu ban phim va xuat ra ma ky tu vua nhap cong viec cu tiep dien den khi nhan ESC., 
+; viet o dang dich ra .EXE - co dung bien
+; VD - Nhap 'A'  ==>  Xuat  65
+;    - Nhap 'B'  ==>  Xuat  66
+;    - Nhap 'a'  ==>  Xuat  97
+;    - Nhap '1'  ==>  Xuat  49 
+; Nguoi viet: Nguyen Chi Thuan
+.model small
+.stack 100
+.data
+     decemial db 10 
+     newline db 10,13,'$'
+     x db ?  
+.code
+main proc
+    mov ax,@data
+    mov ds,ax
+Run:    
+    mov ah,1
+    int 21h
+    mov x,al
+    lea dx, newline
+    mov ah,9
+    int 21h
+    
+    mov al,x
+    mov ah,0
+    mov cx,0       ;gan cx = 0 de dem so ky tu so  
+    cmp al,1Bh
+    JNE Lapchia
+    je Ketthuc
+Lapchia:                                
+        mov dx,0       ;dua dx =0
+        div decemial    ;chia cho ax cho 10 o dang 8 bit ah chua so du al chua thuong
+        
+        add ah,30h      ;bien so trong ah thanh ky tu so
+        mov dl,ah       ; dua ah vao dx
+        push dx         ;dua dx vao ngang xep
+        inc cx          ;them mot chu so la cong them
+        xor ah,ah       ;xoa ah
+        cmp ax,0        ;neu thuong bang 0 thi dung lai
+        jne Lapchia
+        
+Dochienthi:             ;luc nay cx co gia tri la so ky tu
+        pop dx          ;lay tung ky tu so in ra
+        mov ah,2
+        int 21h
+        loop Dochienthi  
+        
+        lea dx,newline
+        mov ah,9
+        int 21h
+        je Run
+Ketthuc: 
+    
+    mov ah,4Ch
+    int 21h
+    main endp
+end
